@@ -1,0 +1,44 @@
+﻿@typeparam Titem
+
+@if(List is null)
+{
+    @if(Loading is null)
+    {
+        <div class="align-items-center">
+            <img src="https://media.tenor.com/On7kvXhzml4AAAAj/loading-gif.gif" />
+        </div>
+    } else
+    {
+        @Loading
+    }
+} else if(List.Count() == 0)
+{
+    @if(NoRecords is null)
+    {
+        <div class="align-items-center">
+            <p>No Hay Registro para mostrar</p>
+        </div>
+    } else
+    {
+        @NoRecords
+    }
+
+} else
+{
+    @Body
+}
+
+@code {
+    [Parameter]
+    public RenderFragment? Loading { get; set; }
+
+    [Parameter]
+    public RenderFragment? NoRecords { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public RenderFragment Body { get; set; } = null!;
+
+    [Parameter]
+    public List<Titem>? List { get; set; } = null!;
+}
