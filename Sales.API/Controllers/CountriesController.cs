@@ -59,7 +59,7 @@ namespace Sales.API.Controllers
             {
                 return NotFound();
             }
-            return Ok();
+            return Ok(country);
         }
     }
 }
