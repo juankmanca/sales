@@ -5,18 +5,19 @@ using Sales.Share.entities;
 
 namespace Sales.API.Controllers
 {
-    [Route("/api/countries")]
     [ApiController]
-    public class CountriesController: ControllerBase
+    [Route("/api/cities")]
+    public class CitiesController : ControllerBase
     {
         private readonly DataContext _dataContext;
-        public CountriesController(DataContext dataContext)
+
+        public CitiesController(DataContext dataContext)
         {
             _dataContext = dataContext;
         }
 
         [HttpPost]
-        public async Task<IActionResult> post(Country country)
+        public async Task<IActionResult> post(City country)
         {
             try
             {
@@ -26,21 +27,21 @@ namespace Sales.API.Controllers
             }
             catch (DbUpdateException dbUpdateException)
             {
-                if(dbUpdateException.InnerException!.Message.Contains("duplicate"))
+                if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
                 {
-                    return BadRequest("Ya existe un país con el mismo nombre.");
+                    return BadRequest("Ya existe una ciudad con el mismo nombre.");
                 }
 
                 return BadRequest(dbUpdateException.Message);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return BadRequest(ex.Message); 
+                return BadRequest(ex.Message);
             }
         }
 
         [HttpPut()]
-        public async Task<IActionResult> put(Country country)
+        public async Task<IActionResult> put(City country)
         {
             try
             {
@@ -52,7 +53,7 @@ namespace Sales.API.Controllers
             {
                 if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
                 {
-                    return BadRequest("Ya existe un país con el mismo nombre.");
+                    return BadRequest("Ya existe una ciudad con el mismo nombre.");
                 }
 
                 return BadRequest(dbUpdateException.Message);
@@ -67,31 +68,20 @@ namespace Sales.API.Controllers
         public async Task<IActionResult> get()
         {
             // include == Inner Join with States
-            return Ok(await _dataContext.Countries
-                .Include(country => country.States)
-                .ToListAsync());
+            return Ok(await _dataContext.Countries.ToListAsync());
         }
 
-        [HttpGet("full")]
-        public async Task<IActionResult> getFull()
-        {
-            // include == Inner Join with States
-            return Ok(await _dataContext.Countries
-                .Include(x => x.States!)
-                .ThenInclude(x => x.Cities)
-                .ToListAsync());
-        }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> delete(int id)
         {
-            var country = await _dataContext.Countries.FirstOrDefaultAsync(x => x.Id == id);
-            if(country == null)
+            var country = await _dataContext.Cities.FirstOrDefaultAsync(x => x.Id == id);
+            if (country == null)
             {
                 return NotFound();
             }
 
-            _dataContext.Countries.Remove(country);
+            _dataContext.Cities.Remove(country);
             await _dataContext.SaveChangesAsync();
             return NoContent();
         }
@@ -99,11 +89,8 @@ namespace Sales.API.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> get(int id)
         {
-            var country = await _dataContext.Countries
-                .Include(x => x.States!)
-                .ThenInclude(x => x.Cities)
-                .FirstOrDefaultAsync(x => x.Id == id);
-            if(country == null)
+            var country = await _dataContext.Cities.FirstOrDefaultAsync(x => x.Id == id);
+            if (country == null)
             {
                 return NotFound();
             }

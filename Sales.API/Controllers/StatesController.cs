@@ -5,18 +5,19 @@ using Sales.Share.entities;
 
 namespace Sales.API.Controllers
 {
-    [Route("/api/countries")]
     [ApiController]
-    public class CountriesController: ControllerBase
+    [Route("/api/states")]
+    public class StatesController: ControllerBase
     {
         private readonly DataContext _dataContext;
-        public CountriesController(DataContext dataContext)
+
+        public StatesController(DataContext context)
         {
-            _dataContext = dataContext;
+            _dataContext = context;
         }
 
         [HttpPost]
-        public async Task<IActionResult> post(Country country)
+        public async Task<IActionResult> post(State country)
         {
             try
             {
@@ -26,21 +27,21 @@ namespace Sales.API.Controllers
             }
             catch (DbUpdateException dbUpdateException)
             {
-                if(dbUpdateException.InnerException!.Message.Contains("duplicate"))
+                if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
                 {
-                    return BadRequest("Ya existe un país con el mismo nombre.");
+                    return BadRequest("Ya existe un estado con el mismo nombre.");
                 }
 
                 return BadRequest(dbUpdateException.Message);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return BadRequest(ex.Message); 
+                return BadRequest(ex.Message);
             }
         }
 
         [HttpPut()]
-        public async Task<IActionResult> put(Country country)
+        public async Task<IActionResult> put(State country)
         {
             try
             {
@@ -52,7 +53,7 @@ namespace Sales.API.Controllers
             {
                 if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
                 {
-                    return BadRequest("Ya existe un país con el mismo nombre.");
+                    return BadRequest("Ya existe un estado con el mismo nombre.");
                 }
 
                 return BadRequest(dbUpdateException.Message);
@@ -67,31 +68,22 @@ namespace Sales.API.Controllers
         public async Task<IActionResult> get()
         {
             // include == Inner Join with States
-            return Ok(await _dataContext.Countries
-                .Include(country => country.States)
+            return Ok(await _dataContext.States
+                .Include(country => country.Cities)
                 .ToListAsync());
         }
 
-        [HttpGet("full")]
-        public async Task<IActionResult> getFull()
-        {
-            // include == Inner Join with States
-            return Ok(await _dataContext.Countries
-                .Include(x => x.States!)
-                .ThenInclude(x => x.Cities)
-                .ToListAsync());
-        }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> delete(int id)
         {
-            var country = await _dataContext.Countries.FirstOrDefaultAsync(x => x.Id == id);
-            if(country == null)
+            var country = await _dataContext.States.FirstOrDefaultAsync(x => x.Id == id);
+            if (country == null)
             {
                 return NotFound();
             }
 
-            _dataContext.Countries.Remove(country);
+            _dataContext.States.Remove(country);
             await _dataContext.SaveChangesAsync();
             return NoContent();
         }
@@ -99,15 +91,15 @@ namespace Sales.API.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> get(int id)
         {
-            var country = await _dataContext.Countries
-                .Include(x => x.States!)
-                .ThenInclude(x => x.Cities)
+            var country = await _dataContext.States
+                .Include(x => x.Cities)
                 .FirstOrDefaultAsync(x => x.Id == id);
-            if(country == null)
+            if (country == null)
             {
                 return NotFound();
             }
             return Ok(country);
         }
+
     }
 }
