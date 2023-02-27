@@ -1,27 +1,29 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@* principal color #acd4f6*@
+
+<div class="top-row ps-3 navbar" style="background: #1b6ec2">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">Sales.WEB</a>
+        <a class="navbar-brand" href="" style="color: white">Mi Tienda</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>
 </div>
 
-<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu" style="background: #1b6ec2; color: black">
+    <nav class="flex-column" >
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+                <span class="oi oi-home" aria-hidden="true"></span> Inicio
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
+            <NavLink class="nav-link" href="/categories">
+                <span class="oi oi-plus" aria-hidden="true"></span> Categorias
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+            <NavLink class="nav-link" href="/countries">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Paises
             </NavLink>
         </div>
     </nav>

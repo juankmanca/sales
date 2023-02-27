@@ -1,0 +1,32 @@
+﻿@page "/categories/create"
+@inject IRepository repository
+@inject NavigationManager navigationManager
+@inject SweetAlertService sweetAlertService
+
+<h3>Crear Categoria</h3>
+
+<CategoryForm @ref="categoriForm" Category="category" OnValidSubmit="Create" ReturnAction="Return" />
+
+@code {
+    private Category category = new();
+    private CategoryForm? categoriForm;
+
+    private async Task Create()
+    {
+        var httpResponse = await repository.Post("api/categories", category);
+        if (httpResponse.Error)
+        {
+            var message = await httpResponse.GetErrorMessageAsync();
+            await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
+            return;
+        }
+        categoriForm!.postedSuccessfully = true;
+        navigationManager.NavigateTo("/categories");
+    }
+
+    private void Return()
+    {
+        categoriForm!.postedSuccessfully = true;
+        navigationManager.NavigateTo("/categories");
+    }
+}
