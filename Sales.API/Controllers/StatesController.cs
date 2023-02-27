@@ -17,7 +17,7 @@ namespace Sales.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> post(State country)
+        public async Task<IActionResult> PostAsync(State country)
         {
             try
             {
@@ -41,7 +41,7 @@ namespace Sales.API.Controllers
         }
 
         [HttpPut()]
-        public async Task<IActionResult> put(State country)
+        public async Task<IActionResult> PutAsync(State country)
         {
             try
             {
@@ -65,7 +65,7 @@ namespace Sales.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> get()
+        public async Task<IActionResult> GetAsync()
         {
             // include == Inner Join with States
             return Ok(await _dataContext.States
@@ -75,7 +75,7 @@ namespace Sales.API.Controllers
 
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
             var country = await _dataContext.States.FirstOrDefaultAsync(x => x.Id == id);
             if (country == null)
@@ -89,7 +89,7 @@ namespace Sales.API.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> get(int id)
+        public async Task<IActionResult> GetAsync(int id)
         {
             var country = await _dataContext.States
                 .Include(x => x.Cities)

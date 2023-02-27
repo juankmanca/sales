@@ -68,7 +68,7 @@ namespace Sales.API.Controllers
         public async Task<IActionResult> get()
         {
             // include == Inner Join with States
-            return Ok(await _dataContext.Countries.ToListAsync());
+            return Ok(await _dataContext.Categories.ToListAsync());
         }
 
 
