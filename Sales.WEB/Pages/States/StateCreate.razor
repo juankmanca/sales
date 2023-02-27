@@ -5,11 +5,11 @@
 
 <h3>Crear Pais</h3>
 
-<StatesForm @ref="statesForm" State="state" OnValidSubmit="Create" ReturnAction="Return" />
+<StateForm @ref="statesForm" State="state" OnValidSubmit="Create" ReturnAction="Return" />
 
 @code {
     private State state = new();
-    private StatesForm? statesForm;
+    private StateForm? statesForm;
 
     [Parameter]
     public int CountryId { get; set; }
