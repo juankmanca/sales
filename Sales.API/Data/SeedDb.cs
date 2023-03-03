@@ -23,7 +23,6 @@ namespace Sales.API.Data
         {
             if (!_context.Categories.Any())
             {
-                _context.Categories.Add(new Category { Name = "Colombia" });
                 _context.Categories.Add(new Category { Name = "Ropa" });
                 _context.Categories.Add(new Category { Name = "Electrónica" });
                 _context.Categories.Add(new Category { Name = "Hogar y jardín" });
