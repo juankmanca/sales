@@ -5,43 +5,42 @@
 
 @if (state is null)
 {
-        <p>Cargando...</p>
+    <p>Cargando...</p>
 }
 else
 {
-        <h3>@state.Name</h3>
-        <div class="mb-2">
-            @*<a class="btn btn-primary" href="/states/create/@state.Id">Nuevo Estado/Departamento</a>*@
-            <a class="btn btn-success" href="/countries/details/@state.Id">Regresar</a>
-        </div>
-        <GenericList List="cities">
-            <Body>
-                <table class="table table-striped text-center mt-3">
-                    <thead>
-                        <tr>
-                            <th>Estado/Departamento</th>
-                            @*<th>Opciones</th>*@
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var state in cities!)
+    <h3>@state.Name</h3>
+    <div class="mb-2">
+        <a class="btn btn-primary" href="/cities/create/@state.Id">Nueva Ciudad</a>
+        <a class="btn btn-success" href="/countries/details/@state.Id">Regresar</a>
+    </div>
+    <GenericList List="cities">
+        <Body>
+            <table class="table table-striped text-center mt-3">
+                <thead>
+                    <tr>
+                        <th>Ciudades</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var city in cities!)
                     {
-                                <tr>
-                                    <td>
-                                @state.Name
-                                    </td>
-                                    <td>
-                                        @*<a href="/states/details/@state.Id" class="btn btn-warning">Detalles</a>*@
-                                        @*<a href="/countries/edit/@state.Id" class="btn btn-warning">Editar</a>*@
-                                        @*<button class="btn btn-danger" @onclick=@(() => DeleteAsync(state.Id))>Borrar</button>*@
-                                    </td>
-                                </tr>
+                        <tr>
+                            <td>
+                                @city.Name
+                            </td>
+                            <td>
+                                @*<a href="/states/details/@state.Id" class="btn btn-warning">Detalles</a>*@
+                                <a href="/cities/edit/@city.Id" class="btn btn-warning">Editar</a>
+                                <button class="btn btn-danger" @onclick=@(() => DeleteAsync(city.Id))>Borrar</button>
+                            </td>
+                        </tr>
                     }
-                    </tbody>
-                </table>
-            </Body>
-        </GenericList>
+                </tbody>
+            </table>
+        </Body>
+    </GenericList>
 }
 
 @code {
