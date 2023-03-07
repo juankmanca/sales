@@ -92,7 +92,7 @@ else
             );
             var confirm = !string.IsNullOrEmpty(result.Value);
             if (!confirm) return;
-            var responseHttp = await repository.Delete($"/api/states/{id}");
+            var responseHttp = await repository.Delete($"/api/cities/{id}");
             if (responseHttp.Error)
             {
                 if (responseHttp.HttpResponseMessage.StatusCode != HttpStatusCode.NotFound)
