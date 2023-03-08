@@ -1,13 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sales.API.Data;
+using Sales.API.Helpers;
+using Sales.Share.DTOs;
 using Sales.Share.entities;
 
 namespace Sales.API.Controllers
 {
     [Route("/api/countries")]
     [ApiController]
-    public class CountriesController: ControllerBase
+    public class CountriesController : ControllerBase
     {
         private readonly DataContext _dataContext;
         public CountriesController(DataContext dataContext)
@@ -26,16 +28,16 @@ namespace Sales.API.Controllers
             }
             catch (DbUpdateException dbUpdateException)
             {
-                if(dbUpdateException.InnerException!.Message.Contains("duplicate"))
+                if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
                 {
                     return BadRequest("Ya existe un país con el mismo nombre.");
                 }
 
                 return BadRequest(dbUpdateException.Message);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return BadRequest(ex.Message); 
+                return BadRequest(ex.Message);
             }
         }
 
@@ -64,13 +66,38 @@ namespace Sales.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> GetAsync([FromQuery] PaginationDTO pagination)
         {
             // include == Inner Join with States
-            return Ok(await _dataContext.Countries
+            var queryable = _dataContext.Countries
                 .Include(country => country.States)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+            }
+
+            return Ok(await queryable.
+                OrderBy(x => x.Id)
+                .Paginate(pagination)
                 .ToListAsync());
+
         }
+
+        [HttpGet("totalPages")]
+        public async Task<ActionResult> GetPages([FromQuery] PaginationDTO pagination)
+        {
+            var queryable = _dataContext.Countries.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+            }
+            double count = await queryable.CountAsync();
+            double totalPages = Math.Ceiling(count / pagination.RecordsNumber);
+            return Ok(totalPages);
+        }
+
 
         [HttpGet("full")]
         public async Task<IActionResult> GetFullAsync()
@@ -86,7 +113,7 @@ namespace Sales.API.Controllers
         public async Task<IActionResult> DeleteAsync(int id)
         {
             var country = await _dataContext.Categories.FirstOrDefaultAsync(x => x.Id == id);
-            if(country == null)
+            if (country == null)
             {
                 return NotFound();
             }
@@ -103,7 +130,7 @@ namespace Sales.API.Controllers
                 .Include(x => x.States!)
                 .ThenInclude(x => x.Cities)
                 .FirstOrDefaultAsync(x => x.Id == id);
-            if(country == null)
+            if (country == null)
             {
                 return NotFound();
             }
