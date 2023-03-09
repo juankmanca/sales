@@ -8,7 +8,6 @@ namespace Sales.API.Helpers
         public static IQueryable<T> Paginate<T>(this IQueryable<T> queryable,
           PaginationDTO pagination)
         {
-            // Debugg!!!
             return queryable
                 .Skip((pagination.Page - 1) * pagination.RecordsNumber)
                 .Take(pagination.RecordsNumber);

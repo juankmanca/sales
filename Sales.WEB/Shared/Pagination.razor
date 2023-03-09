@@ -6,9 +6,9 @@
 
         @foreach (var link in Links)
         {
-                    <li @onclick=@(() => InternalSelectedPage(link)) style="cursor: pointer" class="page-item @(link.Enable ? null : "disabled") @(link.Enable ? "active" : null)">
-                        <a class="page-link">@link.Text</a>
-                    </li>
+            <li @onclick=@(() => InternalSelectedPage(link)) style="cursor: pointer" class="page-item @(link.Enable ? null : "disabled") @(link.Enable ? "active" : null)">
+                <a class="page-link">@link.Text</a>
+            </li>
         }
     </ul>
 </nav>
@@ -17,7 +17,7 @@
 @code {
     [Parameter] public int CurrentPage { get; set; } = 1;
     [Parameter] public int TotalPages { get; set; }
-    [Parameter] public int Radio { get; set; } = 5;
+    [Parameter] public int Radio { get; set; } = 9;
     [Parameter] public EventCallback<int> SelectedPage { get; set; }
     List<PageModel> Links = new();
 
@@ -44,7 +44,7 @@
 
         for (int i = 1; i <= TotalPages; i++)
         {
-            if (i >= CurrentPage - Radio && i <= CurrentPage + Radio)
+            if (i >= CurrentPage - Radio && Links.Count - 1 <= Radio)
             {
                 Links.Add(new PageModel
                     {
@@ -68,7 +68,7 @@
 
     private async Task InternalSelectedPage(PageModel pageModel)
     {
-        if (pageModel.Page == CurrentPage || pageModel.Page == 0)
+        if (pageModel.Page == CurrentPage || pageModel.Page == 0 || pageModel.Page > TotalPages)
         {
             return;
         }
