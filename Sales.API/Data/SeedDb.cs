@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Sales.API.Helpers;
 using Sales.API.Services;
 using Sales.Share.entities;
+using Sales.Share.Enums;
 using Sales.Share.Responses;
+using Sales.Shared.Entities;
 using System.Diagnostics.Metrics;
 
 namespace Sales.API.Data
@@ -10,11 +13,12 @@ namespace Sales.API.Data
     {
         private readonly DataContext _context;
         private readonly IApiService _apiService;
-
-        public SeedDb(DataContext context, IApiService apiService)
+        private readonly IUserHelper _userHelper;
+        public SeedDb(DataContext context, IApiService apiService, IUserHelper userHelper)
         {
             _context = context;
             _apiService = apiService;
+            _userHelper = userHelper;
         }
 
         public async Task SeedAsync()
@@ -24,6 +28,9 @@ namespace Sales.API.Data
             //await CheckCountriesAsync();
             await CheckCountriesApiAsync();
             await CheckCategoriesAsync();
+            await CheckRolesAsync();
+            await CheckUserAsync("1010", "Juan", "Zuluaga", "zulu@yopmail.com", "322 311 4620", "Calle Luna Calle Sol", UserType.Admin);
+
         }
 
         private async Task CheckCategoriesAsync()
@@ -133,7 +140,9 @@ namespace Sales.API.Data
                     List<CountryResponse> countries = (List<CountryResponse>)responseCountries.Result!;
                     foreach (CountryResponse countryResponse in countries)
                     {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                         Country country = await _context.Countries!.FirstOrDefaultAsync(c => c.Name == countryResponse.Name!)!;
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
                         if (country == null)
                         {
                             country = new() { Name = countryResponse.Name!, States = new List<State>() };
@@ -182,6 +191,37 @@ namespace Sales.API.Data
             }
 
         }
+        private async Task<User> CheckUserAsync(string document, string firstName, string lastName, string email, string phone, string address, UserType userType)
+        {
+            var user = await _userHelper.GetUserAsync(email);
+            if (user == null)
+            {
+                user = new User
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Email = email,
+                    UserName = email,
+                    PhoneNumber = phone,
+                    Address = address,
+                    Document = document,
+                    City = _context.Cities.FirstOrDefault(),
+                    UserType = userType,
+                };
+
+                await _userHelper.AddUserAsync(user, "123456");
+                await _userHelper.AddUserToRoleAsync(user, userType.ToString());
+            }
+
+            return user;
+        }
+
+        private async Task CheckRolesAsync()
+        {
+            await _userHelper.CheckRoleAsync(UserType.Admin.ToString());
+            await _userHelper.CheckRoleAsync(UserType.User.ToString());
+        }
+
     }
 
 }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Sales.Shared.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sales.Share.entities
 {
@@ -14,5 +15,7 @@ namespace Sales.Share.entities
         public int StateId { get; set; }
 
         public State? State { get; set; }
+
+        public ICollection<User>? Users { get; set; }
     }
 }
