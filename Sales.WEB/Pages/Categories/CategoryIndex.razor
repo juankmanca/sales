@@ -151,4 +151,23 @@
         currentPage = page;
         await LoadAsync(page);
     }
+
+    // Codigo para validar si el usuario esta autenticado
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+
+    private async Task IncrementCountAsync()
+    {
+        var authenticationState = await authenticationStateTask;
+        var isAuthenticated = authenticationState.User.Identity!.IsAuthenticated;
+        if (isAuthenticated)
+        {
+            //currentCount++;
+        }
+        else
+        {
+            //currentCount--;
+        }
+    }
+
 }
