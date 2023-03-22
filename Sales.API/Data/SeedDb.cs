@@ -4,8 +4,6 @@ using Sales.API.Services;
 using Sales.Share.entities;
 using Sales.Share.Enums;
 using Sales.Share.Responses;
-using Sales.Shared.Entities;
-using System.Diagnostics.Metrics;
 
 namespace Sales.API.Data
 {

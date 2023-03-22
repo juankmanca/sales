@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Sales.Share.entities;
-using Sales.Shared.Entities;
 
 namespace Sales.API.Data
 {

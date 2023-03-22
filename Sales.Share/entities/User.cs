@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Sales.Share.entities;
 using Sales.Share.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace Sales.Shared.Entities
+namespace Sales.Share.entities
 {
     public class User : IdentityUser
     {

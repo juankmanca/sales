@@ -1,4 +1,4 @@
-﻿using Sales.Shared.Entities;
+﻿using Sales.Share.entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace Sales.Share.entities

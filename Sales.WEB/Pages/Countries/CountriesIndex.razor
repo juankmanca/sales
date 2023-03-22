@@ -99,10 +99,17 @@
             url1 = $"api/countries?page={page}&filter={Filter}";
             url2 = $"api/countries/totalPages?filter={Filter}";
         }
-        var responseHppt = await Repository.Get<List<Country>>(url1);
-        var responseHppt2 = await Repository.Get<int>(url2);
-        Countries = responseHppt.Response!;
-        totalPages = responseHppt2.Response!;
+        try
+        {
+            var responseHppt = await Repository.Get<List<Country>>(url1);
+            var responseHppt2 = await Repository.Get<int>(url2);
+            Countries = responseHppt.Response!;
+            totalPages = responseHppt2.Response!;
+        }
+        catch (Exception ex)
+        {
+            await sweetAlertService.FireAsync("Error", ex.Message, SweetAlertIcon.Error);
+        }
     }
 
     protected async override Task OnInitializedAsync()
