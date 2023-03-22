@@ -10,7 +10,7 @@ using System.Text;
 namespace Sales.API.Controllers
 {
     [ApiController]
-    [Route("/api/account")]
+    [Route("/api/accounts")]
     public class AccountsController: ControllerBase
     {
         private readonly IUserHelper _userHelper;
