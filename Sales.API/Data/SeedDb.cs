@@ -23,7 +23,6 @@ namespace Sales.API.Data
         {
             // Update database code
             await _context.Database.EnsureCreatedAsync();
-            //await CheckCountriesAsync();
             await CheckCountriesApiAsync();
             await CheckCategoriesAsync();
             await CheckRolesAsync();
@@ -60,73 +59,6 @@ namespace Sales.API.Data
             await _context.SaveChangesAsync();
         }
 
-
-        private async Task CheckCountriesAsync()
-        {
-            if (!_context.Countries.Any())
-            {
-                _context.Countries.Add(new Country
-                {
-                    Name = "Colombia",
-                    States = new List<State>()
-            {
-                new State()
-                {
-                    Name = "Antioquia",
-                    Cities = new List<City>() {
-                        new City() { Name = "Medellín" },
-                        new City() { Name = "Itagüí" },
-                        new City() { Name = "Envigado" },
-                        new City() { Name = "Bello" },
-                        new City() { Name = "Rionegro" },
-                    }
-                },
-                new State()
-                {
-                    Name = "Bogotá",
-                    Cities = new List<City>() {
-                        new City() { Name = "Usaquen" },
-                        new City() { Name = "Champinero" },
-                        new City() { Name = "Santa fe" },
-                        new City() { Name = "Useme" },
-                        new City() { Name = "Bosa" },
-                    }
-                },
-            }
-                });
-                _context.Countries.Add(new Country
-                {
-                    Name = "Estados Unidos",
-                    States = new List<State>()
-            {
-                new State()
-                {
-                    Name = "Florida",
-                    Cities = new List<City>() {
-                        new City() { Name = "Orlando" },
-                        new City() { Name = "Miami" },
-                        new City() { Name = "Tampa" },
-                        new City() { Name = "Fort Lauderdale" },
-                        new City() { Name = "Key West" },
-                    }
-                },
-                new State()
-                {
-                    Name = "Texas",
-                    Cities = new List<City>() {
-                        new City() { Name = "Houston" },
-                        new City() { Name = "San Antonio" },
-                        new City() { Name = "Dallas" },
-                        new City() { Name = "Austin" },
-                        new City() { Name = "El Paso" },
-                    }
-                },
-            }
-                });
-            }
-
-            await _context.SaveChangesAsync();
-        }
 
         private async Task CheckCountriesApiAsync()
         {
@@ -194,6 +126,13 @@ namespace Sales.API.Data
             var user = await _userHelper.GetUserAsync(email);
             if (user == null)
             {
+                //Buscamos la ciudad
+                var city = await _context.Cities.FirstOrDefaultAsync(c => c.Name == "Medellín");
+                if (city == null)
+                {
+                    city = await _context.Cities.FirstOrDefaultAsync();
+                }
+
                 user = new User
                 {
                     FirstName = firstName,
@@ -203,12 +142,16 @@ namespace Sales.API.Data
                     PhoneNumber = phone,
                     Address = address,
                     Document = document,
-                    City = _context.Cities.FirstOrDefault(),
+                    City = city,
                     UserType = userType,
                 };
 
                 await _userHelper.AddUserAsync(user, "123456");
                 await _userHelper.AddUserToRoleAsync(user, userType.ToString());
+
+                var token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                await _userHelper.ConfirmEmailAsync(user, token);
+
             }
 
             return user;
