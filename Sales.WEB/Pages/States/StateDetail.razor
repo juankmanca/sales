@@ -2,6 +2,7 @@
 @inject IRepository repository
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
+@using Sales.WEB.Pages.Cities
 @attribute [Authorize(Roles = "Admin")]
 
 @if (state is null)
@@ -15,7 +16,7 @@ else
         <div class="card-header">
             <span>
                 <i class="oi oi-globe"></i> @state.Name
-                <a class="btn btn-sm btn-primary float-end" href="/cities/create/@state.Id">Nueva Ciudad</a>
+                <a class="btn btn-sm btn-primary float-end" @onclick=@(() => ShowModal(state.Id))>Nueva Ciudad</a>
                 <a class="btn btn-sm float-end btn-success mx-2" href="/countries/details/@state.CountryId">Regresar</a>
             </span>
         </div>
@@ -51,7 +52,7 @@ else
                                         @city.Name
                                     </td>
                                     <td>
-                                        <a href="/states/edit/@city.Id" class="btn btn-warning btn-sm"><i class="oi oi-pencil" /> Editar</a>
+                                        <a @onclick=@(() => ShowModal(city.Id, true)) class="btn btn-warning btn-sm"><i class="oi oi-pencil" /> Editar</a>
                                         <button class="btn btn-danger btn-sm" @onclick=@(() => DeleteAsync(city.Id))><i class="oi oi-trash" /> Borrar</button>
                                     </td>
                                 </tr>
@@ -78,13 +79,35 @@ else
     [SupplyParameterFromQuery]
     public string Filter { get; set; } = "";
 
-
     [Parameter]
     public int id { get; set; }
+
+    [CascadingParameter]
+    IModalService Modal { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadAsync();
+    }
+
+    private async Task ShowModal(int id = 0, bool isEdit = false)
+    {
+        IModalReference modalReference;
+
+        if (isEdit)
+        {
+            modalReference = Modal.Show<CityEdit>(string.Empty, new ModalParameters().Add("Id", id));
+        }
+        else
+        {
+            modalReference = Modal.Show<CityCreate>(string.Empty, new ModalParameters().Add("StateId", id));
+        }
+
+        var result = await modalReference.Result;
+        if (result.Confirmed)
+        {
+            await LoadAsync();
+        }
     }
 
     private async Task SelectedPage(int page)

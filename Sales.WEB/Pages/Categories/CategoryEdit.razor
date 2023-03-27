@@ -21,6 +21,9 @@ else
     [Parameter]
     public int Id { get; set; }
 
+    [CascadingParameter]
+    BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
     protected override async Task OnInitializedAsync()
     {
         var responseHttp = await repository.Get<Category>($"/api/categories/{Id}");
@@ -49,9 +52,8 @@ else
             await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
             return;
         }
-
-        categoryForm!.postedSuccessfully = true;
-        navigationManager.NavigateTo("/categories");
+        await BlazoredModal.CloseAsync(ModalResult.Ok());
+        Return();
     }
 
     private void Return()

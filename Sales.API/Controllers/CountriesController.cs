@@ -115,15 +115,22 @@ namespace Sales.API.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var country = await _dataContext.Categories.FirstOrDefaultAsync(x => x.Id == id);
-            if (country == null)
+            try
             {
-                return NotFound();
-            }
+                var country = await _dataContext.Countries.FirstOrDefaultAsync(x => x.Id == id);
+                if (country == null)
+                {
+                    return NotFound();
+                }
 
-            _dataContext.Categories.Remove(country);
-            await _dataContext.SaveChangesAsync();
-            return NoContent();
+                _dataContext.Remove(country);
+                _dataContext.SaveChanges();
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpGet("{id:int}")]

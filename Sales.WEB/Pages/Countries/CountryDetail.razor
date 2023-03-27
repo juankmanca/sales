@@ -2,6 +2,7 @@
 @inject IRepository repository
 @inject NavigationManager navigationManager
 @inject SweetAlertService sweetAlertService
+@using Sales.WEB.Pages.States;
 @attribute [Authorize(Roles = "Admin")]
 
 @if (country is null)
@@ -14,7 +15,7 @@ else
         <div class="card-header">
             <span>
                 <i class="oi oi-globe"></i> @country.Name
-                <a class="btn btn-sm btn-primary float-end" href="/states/create/@country.Id">Nuevo Estado/Departamento</a>
+                <a class="btn btn-sm btn-primary float-end" @onclick=@(() => ShowModal(country.Id, false))>Nuevo Estado/Departamento</a>
                 <a class="btn btn-sm float-end btn-success mx-2" href="/countries">Regresar</a>
             </span>
         </div>
@@ -55,8 +56,8 @@ else
                                         @state.CitiesNumber
                                     </td>
                                     <td>
-                                        <a href ="/states/details/@state.Id" class="btn btn-info btn-sm"><i class="oi oi-list" /> Detalles</a>
-                                        <a href="/states/edit/@state.Id" class="btn btn-warning btn-sm"><i class="oi oi-pencil" /> Editar</a>
+                                        <a href="/states/details/@state.Id" class="btn btn-info btn-sm"><i class="oi oi-list" /> Detalles</a>
+                                        <a @onclick=@(() => ShowModal(state.Id, true)) class="btn btn-warning btn-sm"><i class="oi oi-pencil" /> Editar</a>
                                         <button class="btn btn-danger btn-sm" @onclick=@(() => DeleteAsync(state.Id))><i class="oi oi-trash" /> Borrar</button>
                                     </td>
                                 </tr>
@@ -87,9 +88,32 @@ else
     [Parameter]
     public int id { get; set; }
 
+    [CascadingParameter]
+    IModalService Modal { get; set; } = default!;
+
     protected override async Task OnInitializedAsync()
     {
         await LoadAsync();
+    }
+
+    private async Task ShowModal(int id = 0, bool isEdit = false)
+    {
+        IModalReference modalReference;
+
+        if (isEdit)
+        {
+            modalReference = Modal.Show<StateEdit>(string.Empty, new ModalParameters().Add("Id", id));
+        }
+        else
+        {
+            modalReference = Modal.Show<StateCreate>(string.Empty, new ModalParameters().Add("CountryId", id));
+        }
+
+        var result = await modalReference.Result;
+        if (result.Confirmed)
+        {
+            await LoadAsync();
+        }
     }
 
     private async Task SelectedPage(int page)
