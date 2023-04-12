@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Sales.API.Data;
 using Sales.API.Helpers;
 using Sales.Share.DTOs;
 using Sales.Share.entities;
@@ -18,15 +20,17 @@ namespace Sales.API.Controllers
         private readonly IUserHelper _userHelper;
         private readonly IConfiguration _configuration;
         private readonly IMailHelper _mailHelper;
+        private readonly DataContext _dataContext;
         private readonly IFileStorage _fileStorage;
         private readonly string _container;
 
 
-        public AccountsController(IUserHelper userHelper, IConfiguration configuration, IFileStorage fileStorage, IMailHelper mailHelper)
+        public AccountsController(IUserHelper userHelper, IConfiguration configuration, IFileStorage fileStorage, IMailHelper mailHelper, DataContext dataContext)
         {
             _userHelper = userHelper;
             _configuration = configuration;
             _mailHelper = mailHelper;
+            _dataContext = dataContext;
             _fileStorage = fileStorage;
             _container = "users";
         }
@@ -293,6 +297,43 @@ namespace Sales.API.Controllers
             return BadRequest(result.Errors.FirstOrDefault()!.Description);
         }
 
+
+        [HttpGet("all")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<ActionResult> GetAll([FromQuery] PaginationDTO pagination)
+        {
+            var queryable = _dataContext.Users
+                .Include(u => u.City)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x => x.FirstName.ToLower().Contains(pagination.Filter.ToLower()) ||
+                                                    x.LastName.ToLower().Contains(pagination.Filter.ToLower()));
+            }
+
+            return Ok(await queryable
+                .OrderBy(x => x.FirstName)
+                .ThenBy(x => x.LastName)
+                .Paginate(pagination)
+                .ToListAsync());
+        }
+
+        [HttpGet("totalPages")]
+        public async Task<ActionResult> GetPages([FromQuery] PaginationDTO pagination)
+        {
+            var queryable = _dataContext.Users.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(pagination.Filter))
+            {
+                queryable = queryable.Where(x => x.FirstName.ToLower().Contains(pagination.Filter.ToLower()) ||
+                                                    x.LastName.ToLower().Contains(pagination.Filter.ToLower()));
+            }
+
+            double count = await queryable.CountAsync();
+            double totalPages = Math.Ceiling(count / pagination.RecordsNumber);
+            return Ok(totalPages);
+        }
 
 
 

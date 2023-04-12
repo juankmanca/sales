@@ -12,6 +12,5 @@ namespace Sales.API.Helpers
                 .Skip((pagination.Page - 1) * pagination.RecordsNumber)
                 .Take(pagination.RecordsNumber);
         }
-
     }
 }
