@@ -70,7 +70,7 @@ namespace Sales.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetAsync([FromQuery] PaginationDTO pagination)
+        public async Task<IActionResult> GetAsync([FromQuery] PaginationDTO pagination)
         {
             try
             {

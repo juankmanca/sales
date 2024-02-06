@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sales.Share.DTOs
+﻿namespace Sales.Share.DTOs
 {
     public class PaginationDTO
     {
@@ -15,6 +9,8 @@ namespace Sales.Share.DTOs
         public int Page { get; set; } = 1;
 
         public int RecordsNumber { get; set; } = 10;
+
+        public string? CategoryFilter { get; set; }
     }
 
 }
