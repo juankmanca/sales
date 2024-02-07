@@ -41,10 +41,10 @@ namespace Sales.API.Controllers
         [HttpGet]
         public async Task<ActionResult> Get([FromQuery] PaginationDTO pagination)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == User.Identity!.Name);   
+            var user = await _userHelper.GetUserAsync(User.Identity!.Name!);
             if (user == null)
             {
-                return BadRequest("User not valid.");
+                return NotFound("User not Found.");
             }
 
             var queryable = _context.Sales
@@ -68,10 +68,10 @@ namespace Sales.API.Controllers
         [HttpGet("totalPages")]
         public async Task<ActionResult> GetPages([FromQuery] PaginationDTO pagination)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == User.Identity!.Name);
+            var user = await _userHelper.GetUserAsync(User.Identity!.Name!);
             if (user == null)
             {
-                return BadRequest("User not valid.");
+                return NotFound("User not Found.");
             }
 
             var queryable = _context.Sales

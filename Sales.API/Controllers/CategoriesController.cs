@@ -26,16 +26,7 @@ namespace Sales.API.Controllers
             {
                 _dataContext.Add(country);
                 await _dataContext.SaveChangesAsync();
-                return Ok();
-            }
-            catch (DbUpdateException dbUpdateException)
-            {
-                if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
-                {
-                    return BadRequest("Ya existe una categoria con el mismo nombre.");
-                }
-
-                return BadRequest(dbUpdateException.Message);
+                return Ok(country);
             }
             catch (Exception ex)
             {
@@ -48,18 +39,9 @@ namespace Sales.API.Controllers
         {
             try
             {
-                _dataContext.Update(category);
+                _dataContext.Categories.Update(category);
                 await _dataContext.SaveChangesAsync();
-                return Ok();
-            }
-            catch (DbUpdateException dbUpdateException)
-            {
-                if (dbUpdateException.InnerException!.Message.Contains("duplicate"))
-                {
-                    return BadRequest("Ya existe una categoria con el mismo nombre.");
-                }
-
-                return BadRequest(dbUpdateException.Message);
+                return Ok(category);
             }
             catch (Exception ex)
             {
@@ -67,11 +49,11 @@ namespace Sales.API.Controllers
             }
         }
 
+        // Primer prueba unitaria
         [HttpGet]
         public async Task<ActionResult> GetAsync([FromQuery] PaginationDTO pagination)
         {
-            var queryable = _dataContext.Categories
-                .AsQueryable();
+            var queryable = _dataContext.Categories.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(pagination.Filter))
             {
