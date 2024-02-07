@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sales.API.Data;
+using Sales.API.Helpers;
 using Sales.Share.DTOs;
 using Sales.Share.entities;
 
@@ -13,11 +14,13 @@ namespace Sales.API.Controllers
     [Route("/api/temporalSales")]
     public class TemporalSalesController : ControllerBase
     {
+        private readonly IUserHelper _userHelper;
         private readonly DataContext _context;
 
-        public TemporalSalesController(DataContext context)
+        public TemporalSalesController(DataContext context, IUserHelper userHelper)
         {
             _context = context;
+            _userHelper = userHelper;
         }
 
         [HttpPost]
@@ -28,8 +31,7 @@ namespace Sales.API.Controllers
             {
                 return NotFound();
             }
-
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == User.Identity!.Name);
+            var user = await _userHelper.GetUserAsync(User.Identity!.Name!);
             if (user == null)
             {
                 return NotFound();

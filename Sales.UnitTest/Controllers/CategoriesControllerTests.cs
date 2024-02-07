@@ -177,12 +177,13 @@ namespace Sales.UnitTest.Controllers
         {
             // Arrange
             using var context = new DataContext(_options);
-            var category = new Category() { Id = 1, Name = "juan" };
-            var categoryForUpdate = new Category() { Id = 1, Name = "juan" };
+            var category = new Category() { Name = "Juan" };
+            var categoryForUpdate = new Category() { Id = 1, Name = "Jose" };
 
             await context.Categories.AddAsync(category);
             await context.SaveChangesAsync();
 
+            var x = await context.Categories.ToListAsync();
             var controller = new CategoriesController(context);
 
             // Act

@@ -48,19 +48,6 @@ namespace Sales.UnitTest.Controllers
             _salesController.ControllerContext.HttpContext = new DefaultHttpContext { User = user };
         }
 
-        //private void SetupUser(string username)
-        //{
-        //    var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
-        //    {
-        //    new Claim(ClaimTypes.Name, username)
-        //    }, "mock"));
-        //    _salesController.ControllerContext = new ControllerContext()
-        //    {
-        //        HttpContext = new DefaultHttpContext() { User = user }
-        //    };
-        //}
-
-
         [TestCleanup]
         public void Cleanup()
         {
