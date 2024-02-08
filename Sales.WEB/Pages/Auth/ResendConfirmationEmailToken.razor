@@ -39,7 +39,7 @@
     private async Task ResendConfirmationEmailTokenAsync()
     {
         loading = true;
-        var responseHttp = await repository.Post("/api/accounts/ResedToken", emailDTO);
+        var responseHttp = await repository.Post("/api/accounts/ResetToken", emailDTO);
         if (responseHttp.Error)
         {
             var message = await responseHttp.GetErrorMessageAsync();

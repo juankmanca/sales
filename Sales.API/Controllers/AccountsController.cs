@@ -80,7 +80,8 @@ namespace Sales.API.Controllers
             if (result.Succeeded)
             {
                 var user = await _userHelper.GetUserAsync(model.Email);
-                return Ok(BuildToken(user));
+                var token = BuildToken(user);
+                return Ok(token);
             }
 
             if (result.IsLockedOut)
@@ -134,16 +135,16 @@ namespace Sales.API.Controllers
         {
             try
             {
+                var currentUser = await _userHelper.GetUserAsync(User.Identity!.Name!);
+                if (currentUser == null)
+                {
+                    return NotFound();
+                }
+
                 if (!string.IsNullOrEmpty(user.Photo))
                 {
                     var photoUser = Convert.FromBase64String(user.Photo);
                     user.Photo = await _fileStorage.SaveFileAsync(photoUser, ".jpg", _container);
-                }
-
-                var currentUser = await _userHelper.GetUserAsync(user.Email!);
-                if (currentUser == null)
-                {
-                    return NotFound();
                 }
 
                 currentUser.Document = user.Document;
@@ -191,12 +192,12 @@ namespace Sales.API.Controllers
             }
 
             var result = await _userHelper.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
-            if (!result.Succeeded)
+            if (result.Succeeded)
             {
-                return BadRequest(result.Errors.FirstOrDefault().Description);
+                return NoContent();
             }
 
-            return NoContent();
+            return BadRequest(result.Errors.FirstOrDefault().Description);
         }
 
 
@@ -219,8 +220,8 @@ namespace Sales.API.Controllers
             return NoContent();
         }
 
-        [HttpPost("ResedToken")]
-        public async Task<ActionResult> ResedToken([FromBody] EmailDTO model)
+        [HttpPost("ResetToken")]
+        public async Task<ActionResult> ResetToken([FromBody] EmailDTO model)
         {
             User user = await _userHelper.GetUserAsync(model.Email);
             if (user == null)
@@ -282,7 +283,7 @@ namespace Sales.API.Controllers
         [HttpPost("ResetPassword")]
         public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordDTO model)
         {
-            User user = await _userHelper.GetUserAsync(model.Email);
+            User? user = await _userHelper.GetUserAsync(model.Email);
             if (user == null)
             {
                 return NotFound();
