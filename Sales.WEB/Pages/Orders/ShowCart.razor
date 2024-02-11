@@ -24,7 +24,7 @@ else
                             <h3>Cantidad productos: <strong>@($"{sumQuantity:N2}")</strong></h3>
                         </div>
                         <div class="col-4">
-                            <h3>Valor: <strong>@($"{sumValue:C2}")</strong></h3>
+                            <h3>Valor: <strong>@($"${sumValue.ToString("#,0")}")</strong></h3>
                         </div>
                     </div>
                     <EditForm Model="SaleDTO" OnValidSubmit="ConfirmOrderAsync">
@@ -65,10 +65,10 @@ else
                                         @($"{temporalSale.Quantity:N2}")
                                     </td>
                                     <td>
-                                        @($"{temporalSale.Product!.Price:C2}")
+                                        @($"${temporalSale.Product!.Price.ToString("#,0")}")
                                     </td>
                                     <td>
-                                        @($"{temporalSale.Value:C2}")
+                                        @($"${temporalSale.Value.ToString("#,0")}")
                                     </td>
                                     <td>
                                         @temporalSale.Remarks

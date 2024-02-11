@@ -51,12 +51,13 @@ else
                             @foreach (var user in Users)
                             {
                                 <tr>
-                                    <td><img src="@user.Photo" width="80" height="80" style="border-radius:50%" /></td>
+                                <td><img src="@(string.IsNullOrEmpty(user.Photo) ? "/images/Unknown_person.jpg" : user.Photo)" width="80" height="80" style="border-radius:50%" /></td>
                                     <td>@user.FullName</td>
                                     <td>@user.Document</td>
                                     <td>@user.PhoneNumber</td>
                                     <td>@user.Email</td>
-                                    <td>@user.Address, @user.City!.Name</td>
+                                    <td>@user.FullAddress</td>
+                                    @* <td>@user.Address, @user.City!.Name</td> *@
                                     <td>@user.EmailConfirmed</td>
                                     <td>@user.UserType</td>
                                 </tr>

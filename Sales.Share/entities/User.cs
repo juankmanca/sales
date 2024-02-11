@@ -45,5 +45,19 @@ namespace Sales.Share.entities
 
         public ICollection<Sale>? Sales { get; set; }
 
+        [Display(Name = "Dirección")]
+        public string FullAddress
+        {
+            get
+            {
+                var fullAddress = Address;
+                if (City != null && City!.Name != null) fullAddress += $", {City.Name}";
+                if (City != null && City!.State != null && City!.State!.Name != null) fullAddress += $", {City.State.Name}";
+                if (City != null && City!.State != null && City!.State!.Country != null && City!.State!.Country!.Name != null) fullAddress += $", {City.State.Country.Name}";
+                return fullAddress;
+            }
+        }
+
+
     }
 }

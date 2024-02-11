@@ -305,6 +305,8 @@ namespace Sales.API.Controllers
         {
             var queryable = _dataContext.Users
                 .Include(u => u.City)
+                .ThenInclude(c => c!.State)
+                .ThenInclude(s => s!.Country)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(pagination.Filter))

@@ -27,17 +27,17 @@ else
 
     protected async override Task OnInitializedAsync()
     {
-        var httpResponse = await repository.Get<List<Category>>("/api/categories");
+        var httpActionResponse = await repository.Get<List<Category>>("/api/categories/?RecordsNumber=9999");
         loading = false;
 
-        if (httpResponse.Error)
+        if (httpActionResponse.Error)
         {
-            var message = await httpResponse.GetErrorMessageAsync();
+            var message = await httpActionResponse.GetErrorMessageAsync();
             await sweetAlertService.FireAsync("Error", message, SweetAlertIcon.Error);
             return;
         }
 
-        nonSelectedCategories = httpResponse.Response!;
+        nonSelectedCategories = httpActionResponse.Response!;
     }
 
     private async Task CreateAsync()

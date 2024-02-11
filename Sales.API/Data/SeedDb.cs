@@ -27,7 +27,8 @@ namespace Sales.API.Data
         {
             // Update database code
             await _context.Database.EnsureCreatedAsync();
-            await CheckCountriesApiAsync();
+            //await CheckCountriesApiAsync();
+            await CheckCountriesAsync2();
             await CheckCategoriesAsync();
             await CheckRolesAsync();
             await CheckUserAsync("1010", "Juan", "Zuluaga", "zulu@yopmail.com", "322 311 4620", "Calle Luna Calle Sol", "JuanZuluaga.jpg", UserType.Admin);
@@ -38,6 +39,32 @@ namespace Sales.API.Data
             await CheckProductsAsync();
 
 
+        }
+
+        private async Task CheckCountriesAsync2()
+        {
+            if (!_context.Countries.Any())
+            {
+                _context.Countries.Add(new Country
+                {
+                    Name = "Colombia",
+                    States = new List<State>
+            {
+                new State
+                {
+                    Name = "Antioquia",
+                    Cities = new List<City>
+                    {
+                        new City
+                        {
+                            Name = "Medellín"
+                        }
+                    }
+                }
+            }
+                });
+                await _context.SaveChangesAsync();
+            }
         }
 
         private async Task CheckCategoriesAsync()
@@ -169,7 +196,8 @@ namespace Sales.API.Data
                     Photo = imagePath
                 };
 
-                await _userHelper.AddUserAsync(user, "123456");
+                var password = "123456";
+                await _userHelper.AddUserAsync(user, password);
                 await _userHelper.AddUserToRoleAsync(user, userType.ToString());
 
                 var token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);

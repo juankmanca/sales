@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using System.Globalization
 @inject IRepository Repository
 @inject NavigationManager navigationManager
 @inject SweetAlertService SweetAlertService
@@ -87,7 +88,7 @@ else
                         <div class="card-body">
                             <h5 class="card-title text-navy"> @product.Name</h5>
                             <p class="card-text smfnt">@product.Description</p>
-                            <h5 class="text-muted">@($"{product.Price:C2}")</h5>
+                            <h5 class="text-muted">@($"${product.Price.ToString("#,0")}")</h5>
                         </div>
                         <div class="card-footer text-center">
                             <a href="/orders/details/@product.Id" class="btn btn-sm btn-secondary"><i class="oi oi-info" /> Detalles</a>

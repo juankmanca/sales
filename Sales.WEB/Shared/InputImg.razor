@@ -33,16 +33,24 @@
 
     async Task OnChange(InputFileChangeEventArgs e)
     {
-        var imagenes = e.GetMultipleFiles();
-
-        foreach (var imagen in imagenes)
+        try
         {
-            var arrBytes = new byte[imagen.Size];
-            await imagen.OpenReadStream().ReadAsync(arrBytes);
-            imageBase64 = Convert.ToBase64String(arrBytes);
-            ImageURL = null;
-            await ImageSelected.InvokeAsync(imageBase64);
-            StateHasChanged();
+            var imagenes = e.GetMultipleFiles();
+
+            foreach (var imagen in imagenes)
+            {
+                var resized = await imagen.RequestImageFileAsync(imagen.ContentType, 300, 500);
+                var arrBytes = new byte[resized.Size];
+                await resized.OpenReadStream().ReadAsync(arrBytes);
+                imageBase64 = Convert.ToBase64String(arrBytes);
+                ImageURL = null;
+                await ImageSelected.InvokeAsync(imageBase64);
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Write(ex.Message);
         }
     }
 }

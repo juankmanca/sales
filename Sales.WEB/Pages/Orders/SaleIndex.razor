@@ -67,7 +67,7 @@ else
                                         @($"{sale.Quantity:N2}")
                                     </td>
                                     <td>
-                                        @($"{sale.Value:C2}")
+                                        @($"${sale.Value.ToString("#,0")}")
                                     </td>
                                     <td>
                                         <a href="orders/saleDetails/@sale.Id" class="btn btn-info"><i class="oi oi-info" /> Detalles</a>
